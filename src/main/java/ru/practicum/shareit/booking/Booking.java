@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Booking<Item> {
+public class Booking {
 
     private Long id;
 
@@ -24,4 +24,5 @@ public class Booking<Item> {
     private User booker;
 
     private BookingStatus status;
+
 }
