@@ -39,102 +39,44 @@ class ItemRequestControllerTest {
     @Test
     void shouldCreateRequest() throws Exception {
         createUser();
-
-        mockMvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", 1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"description": "I need a drill"
-                                }
-                                """))
-                .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").value(1))
-                .andExpect(jsonPath("$.description")
-                        .value("I need a drill"));
+        mockMvc.perform(post("/requests").header("X-Sharer-User-Id", 1).contentType(MediaType.APPLICATION_JSON).content("{\"description\":\"I need a drill\"}")).andExpect(status().isCreated()).andExpect(jsonPath("$.id").value(1)).andExpect(jsonPath("$.description").value("I need a drill"));
     }
 
     @Test
     void shouldRejectEmptyDescription() throws Exception {
         createUser();
-
-        mockMvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", 1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"description": ""
-                                }
-                                """))
-                .andExpect(status().isBadRequest());
+        mockMvc.perform(post("/requests").header("X-Sharer-User-Id", 1).contentType(MediaType.APPLICATION_JSON).content("{\"description\":\"\"}")).andExpect(status().isBadRequest());
     }
 
     @Test
     void shouldReturnUserRequests() throws Exception {
         createUser();
         createRequest();
-
-        mockMvc.perform(get("/requests")
-                        .header("X-Sharer-User-Id", 1))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", is(1)));
+        mockMvc.perform(get("/requests").header("X-Sharer-User-Id", 1)).andExpect(status().isOk()).andExpect(jsonPath("$.length()", is(1)));
     }
 
     @Test
     void shouldReturnRequestsExceptCurrentUser() throws Exception {
         createUser();
         createRequest();
-
         createSecondUser();
         createSecondRequest();
-
-        mockMvc.perform(get("/requests/all")
-                        .header("X-Sharer-User-Id", 1))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()", is(1)))
-                .andExpect(jsonPath("$[0].description")
-                        .value("Second request"));
+        mockMvc.perform(get("/requests/all").header("X-Sharer-User-Id", 1)).andExpect(status().isOk()).andExpect(jsonPath("$.length()", is(1))).andExpect(jsonPath("$[0].description").value("Second request"));
     }
 
     private void createUser() throws Exception {
-        mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name": "John Doe",
-                                  "email": "john@example.com"
-                                }
-                                """))
-                .andExpect(status().isCreated());
+        mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"John Doe\",\"email\":\"john@example.com\"}")).andExpect(status().isCreated());
     }
 
     private void createSecondUser() throws Exception {
-        mockMvc.perform(post("/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name": "Jane Doe",
-                                  "email": "jane@example.com"
-                                }
-                                """))
-                .andExpect(status().isCreated());
+        mockMvc.perform(post("/users").contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"Jane Doe\",\"email\":\"jane@example.com\"}")).andExpect(status().isCreated());
     }
 
     private void createRequest() throws Exception {
-        mockMvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", 1)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"description": "I need a drill"
-                                }
-                                """))
-                .andExpect(status().isCreated());
+        mockMvc.perform(post("/requests").header("X-Sharer-User-Id", 1).contentType(MediaType.APPLICATION_JSON).content("{\"description\":\"I need a drill\"}")).andExpect(status().isCreated());
     }
 
     private void createSecondRequest() throws Exception {
-        mockMvc.perform(post("/requests")
-                        .header("X-Sharer-User-Id", 2)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"description": "Second request"
-                                }
-                                """))
-                .andExpect(status().isCreated());
+        mockMvc.perform(post("/requests").header("X-Sharer-User-Id", 2).contentType(MediaType.APPLICATION_JSON).content("{\"description\":\"Second request\"}")).andExpect(status().isCreated());
     }
 }
