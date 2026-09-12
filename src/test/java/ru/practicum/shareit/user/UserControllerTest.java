@@ -36,8 +36,7 @@ class UserControllerTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "John Doe",
+                                {"name": "John Doe",
                                   "email": "john@example.com"
                                 }
                                 """))
@@ -52,8 +51,7 @@ class UserControllerTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "John Doe"
+                                {"name": "John Doe"
                                 }
                                 """))
                 .andExpect(status().isBadRequest());
@@ -64,8 +62,7 @@ class UserControllerTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "John Doe",
+                                {"name": "John Doe",
                                   "email": "john.com"
                                 }
                                 """))
@@ -79,8 +76,7 @@ class UserControllerTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Another John",
+                                {"name": "Another John",
                                   "email": "john@example.com"
                                 }
                                 """))
@@ -94,8 +90,7 @@ class UserControllerTest {
         mockMvc.perform(patch("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "email": "new@example.com"
+                                {"email": "new@example.com"
                                 }
                                 """))
                 .andExpect(status().isOk())
@@ -110,8 +105,7 @@ class UserControllerTest {
         mockMvc.perform(patch("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Updated John"
+                                {"name": "Updated John"
                                 }
                                 """))
                 .andExpect(status().isOk())
@@ -150,8 +144,7 @@ class UserControllerTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "John Doe",
+                                {"name": "John Doe",
                                   "email": "%s"
                                 }
                                 """.formatted(email)))

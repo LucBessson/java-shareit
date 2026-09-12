@@ -45,8 +45,7 @@ class ItemControllerTest {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Drill",
+                                {"name": "Drill",
                                   "description": "Power drill",
                                   "available": true
                                 }
@@ -65,8 +64,7 @@ class ItemControllerTest {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Drill",
+                                {"name": "Drill",
                                   "description": "Power drill"
                                 }
                                 """))
@@ -81,8 +79,7 @@ class ItemControllerTest {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "description": "Power drill",
+                                {"description": "Power drill",
                                   "available": true
                                 }
                                 """))
@@ -97,8 +94,7 @@ class ItemControllerTest {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Drill",
+                                {"name": "Drill",
                                   "description": "Power drill",
                                   "available": false
                                 }
@@ -116,8 +112,7 @@ class ItemControllerTest {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Updated drill",
+                                {"name": "Updated drill",
                                   "available": false
                                 }
                                 """))
@@ -171,8 +166,7 @@ class ItemControllerTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "John Doe",
+                                {"name": "John Doe",
                                   "email": "john@example.com"
                                 }
                                 """))
@@ -184,8 +178,7 @@ class ItemControllerTest {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Drill",
+                                {"name": "Drill",
                                   "description": "Power drill",
                                   "available": true
                                 }

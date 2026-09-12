@@ -51,8 +51,7 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", 2)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "start": "2099-01-01T10:00:00",
+                                {"start": "2099-01-01T10:00:00",
                                   "end": "2099-01-01T12:00:00",
                                   "itemId": 1
                                 }
@@ -73,8 +72,7 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "start": "2099-01-01T10:00:00",
+                                {"start": "2099-01-01T10:00:00",
                                   "end": "2099-01-01T12:00:00",
                                   "itemId": 1
                                 }
@@ -92,8 +90,7 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", 2)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "start": "2099-01-01T10:00:00",
+                                {"start": "2099-01-01T10:00:00",
                                   "end": "2099-01-01T12:00:00",
                                   "itemId": 1
                                 }
@@ -107,8 +104,7 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", 999)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "start": "2099-01-01T10:00:00",
+                                {"start": "2099-01-01T10:00:00",
                                   "end": "2099-01-01T12:00:00",
                                   "itemId": 1
                                 }
@@ -124,8 +120,7 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "start": "2099-01-01T10:00:00",
+                                {"start": "2099-01-01T10:00:00",
                                   "end": "2099-01-01T12:00:00",
                                   "itemId": 999
                                 }
@@ -143,8 +138,7 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", 2)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "start": "2099-01-01T12:00:00",
+                                {"start": "2099-01-01T12:00:00",
                                   "end": "2099-01-01T10:00:00",
                                   "itemId": 1
                                 }
@@ -219,8 +213,7 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", 2)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "start": "2099-01-01T10:00:00",
+                                {"start": "2099-01-01T10:00:00",
                                   "end": "2099-01-01T10:00:00",
                                   "itemId": 1
                                 }
@@ -232,8 +225,7 @@ class BookingControllerTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Test User",
+                                {"name": "Test User",
                                   "email": "%s"
                                 }
                                 """.formatted(email)))
@@ -248,8 +240,7 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", ownerId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Drill",
+                                {"name": "Drill",
                                   "description": "Power drill",
                                   "available": %s
                                 }
@@ -265,8 +256,7 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "start": "2099-01-01T10:00:00",
+                                {"start": "2099-01-01T10:00:00",
                                   "end": "2099-01-01T12:00:00",
                                   "itemId": %d
                                 }

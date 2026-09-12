@@ -44,8 +44,7 @@ class ItemRequestControllerTest {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "description": "I need a drill"
+                                {"description": "I need a drill"
                                 }
                                 """))
                 .andExpect(status().isCreated())
@@ -62,8 +61,7 @@ class ItemRequestControllerTest {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "description": ""
+                                {"description": ""
                                 }
                                 """))
                 .andExpect(status().isBadRequest());
@@ -100,8 +98,7 @@ class ItemRequestControllerTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "John Doe",
+                                {"name": "John Doe",
                                   "email": "john@example.com"
                                 }
                                 """))
@@ -112,8 +109,7 @@ class ItemRequestControllerTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Jane Doe",
+                                {"name": "Jane Doe",
                                   "email": "jane@example.com"
                                 }
                                 """))
@@ -125,8 +121,7 @@ class ItemRequestControllerTest {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "description": "I need a drill"
+                                {"description": "I need a drill"
                                 }
                                 """))
                 .andExpect(status().isCreated());
@@ -137,8 +132,7 @@ class ItemRequestControllerTest {
                         .header("X-Sharer-User-Id", 2)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "description": "Second request"
+                                {"description": "Second request"
                                 }
                                 """))
                 .andExpect(status().isCreated());
