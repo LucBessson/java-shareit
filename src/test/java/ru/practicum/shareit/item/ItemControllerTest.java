@@ -11,9 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.user.UserRepository;
 
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -173,11 +171,11 @@ class ItemControllerTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                        {
-                          "name": "John Doe",
-                          "email": "john@example.com"
-                        }
-                        """))
+                                {
+                                  "name": "John Doe",
+                                  "email": "john@example.com"
+                                }
+                                """))
                 .andExpect(status().isCreated());
     }
 
@@ -186,12 +184,12 @@ class ItemControllerTest {
                         .header("X-Sharer-User-Id", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                        {
-                          "name": "Drill",
-                          "description": "Power drill",
-                          "available": true
-                        }
-                        """))
+                                {
+                                  "name": "Drill",
+                                  "description": "Power drill",
+                                  "available": true
+                                }
+                                """))
                 .andExpect(status().isCreated());
     }
 }
