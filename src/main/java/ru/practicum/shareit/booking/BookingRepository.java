@@ -47,4 +47,9 @@ public class BookingRepository {
                                 .equals(userId))
                 .toList();
     }
+
+    public void deleteAll() {
+        bookings.clear();
+        nextId = 1L;
+    }
 }

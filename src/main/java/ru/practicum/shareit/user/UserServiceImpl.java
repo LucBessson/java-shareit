@@ -26,6 +26,10 @@ public class UserServiceImpl implements UserService {
             throw new ValidationException("Email cannot be empty");
         }
 
+        if (!userDto.getEmail().contains("@")) {
+            throw new ValidationException("Invalid email");
+        }
+
         if (userRepository.existsByEmail(userDto.getEmail())) {
             throw new ConflictException("Email already exists");
         }

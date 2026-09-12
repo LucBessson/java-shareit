@@ -39,6 +39,10 @@ public class ItemServiceImpl implements ItemService {
                     "Item description cannot be empty");
         }
 
+        if (itemDto.getAvailable() == null) {
+            throw new ValidationException("Available cannot be null");
+        }
+
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(owner);
 

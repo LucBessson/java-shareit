@@ -68,4 +68,9 @@ public class ItemRepository {
                 })
                 .toList();
     }
+
+    public void deleteAll() {
+        items.clear();
+        nextId = 1L;
+    }
 }

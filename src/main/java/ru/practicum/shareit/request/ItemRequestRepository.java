@@ -36,4 +36,9 @@ public class ItemRequestRepository {
                                 && request.getRequestor().getId().equals(userId))
                 .toList();
     }
+
+    public void deleteAll() {
+        requests.clear();
+        nextId = 1L;
+    }
 }

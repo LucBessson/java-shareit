@@ -11,7 +11,7 @@ public class UserRepository {
 
     private final List<User> users = new ArrayList<>();
 
-    private long nextId = 1;
+    private long nextId = 1L;
 
     public User save(User user) {
         user.setId(nextId++);
@@ -59,5 +59,10 @@ public class UserRepository {
 
     public void deleteById(Long id) {
         users.removeIf(user -> user.getId().equals(id));
+    }
+
+    public void deleteAll() {
+        users.clear();
+        nextId = 1L;
     }
 }
