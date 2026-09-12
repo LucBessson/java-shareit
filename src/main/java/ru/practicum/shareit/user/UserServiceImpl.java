@@ -3,6 +3,7 @@ package ru.practicum.shareit.user;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.ValidationException;
 
 import java.util.List;
 
@@ -17,6 +18,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
+        if (userDto.getName() == null || userDto.getName().isBlank()) {
+            throw new ValidationException("Name cannot be empty");
+        }
+
+        if (userDto.getEmail() == null || userDto.getEmail().isBlank()) {
+            throw new ValidationException("Email cannot be empty");
+        }
+
         if (userRepository.existsByEmail(userDto.getEmail())) {
             throw new ConflictException("Email already exists");
         }
