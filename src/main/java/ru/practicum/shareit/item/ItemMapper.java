@@ -9,18 +9,11 @@ public class ItemMapper {
     }
 
     public static ItemDto toItemDto(Item item) {
-        Long requestId = null;
-
-        if (item.getRequest() != null) {
-            requestId = item.getRequest().getId();
-        }
-
         return new ItemDto(
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
-                item.isAvailable(),
-                requestId
+                item.isAvailable()
         );
     }
 
@@ -38,3 +31,4 @@ public class ItemMapper {
         return item;
     }
 }
+
