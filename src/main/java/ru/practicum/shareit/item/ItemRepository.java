@@ -3,46 +3,36 @@ package ru.practicum.shareit.item;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Repository
 public class ItemRepository {
 
-    private final List<Item> items = new ArrayList<>();
+    private final Map<Long, Item> items = new HashMap<>();
 
     private long nextId = 1L;
 
     public Item save(Item item) {
         item.setId(nextId++);
-        items.add(item);
+        items.put(item.getId(), item);
         return item;
     }
 
     public Item update(Item item) {
-        for (int i = 0; i < items.size(); i++) {
-            if (items.get(i).getId().equals(item.getId())) {
-                items.set(i, item);
-                return item;
-            }
-        }
-
-        return null;
+        items.put(item.getId(), item);
+        return item;
     }
 
     public Optional<Item> findById(Long id) {
-        return items.stream()
-                .filter(item -> item.getId().equals(id))
-                .findFirst();
+        return Optional.ofNullable(items.get(id));
     }
 
     public List<Item> findAll() {
-        return new ArrayList<>(items);
+        return new ArrayList<>(items.values());
     }
 
     public List<Item> findByOwnerId(Long ownerId) {
-        return items.stream()
+        return items.values().stream()
                 .filter(item ->
                         item.getOwner() != null
                                 && item.getOwner().getId().equals(ownerId))
@@ -52,7 +42,7 @@ public class ItemRepository {
     public List<Item> search(String text) {
         String searchText = text.toLowerCase();
 
-        return items.stream()
+        return items.values().stream()
                 .filter(Item::isAvailable)
                 .filter(item -> {
                     String name = item.getName() == null
@@ -74,3 +64,4 @@ public class ItemRepository {
         nextId = 1L;
     }
 }
+

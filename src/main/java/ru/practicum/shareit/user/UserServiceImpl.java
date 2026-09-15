@@ -44,9 +44,19 @@ public class UserServiceImpl implements UserService {
     public UserDto update(Long userId, UserDto userDto) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
-                        new NotFoundException("User not found"));
+                        new NotFoundException(
+                                "User with id " + userId + " not found"));
 
         if (userDto.getEmail() != null) {
+            if (userDto.getEmail().isBlank()) {
+                throw new ValidationException("Email cannot be empty");
+            }
+
+            if (!userDto.getEmail().matches(
+                    "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+                throw new ValidationException("Invalid email");
+            }
+
             if (userRepository.existsByEmailAndNotId(
                     userDto.getEmail(), userId)) {
                 throw new ConflictException("Email already exists");
@@ -56,6 +66,10 @@ public class UserServiceImpl implements UserService {
         }
 
         if (userDto.getName() != null) {
+            if (userDto.getName().isBlank()) {
+                throw new ValidationException("Name cannot be empty");
+            }
+
             user.setName(userDto.getName());
         }
 
@@ -66,9 +80,20 @@ public class UserServiceImpl implements UserService {
     public UserDto getById(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() ->
-                        new NotFoundException("User not found"));
+                        new NotFoundException(
+                                "User with id " + userId + " not found"));
 
         return UserMapper.toUserDto(user);
+    }
+
+    @Override
+    public void delete(Long userId) {
+        if (!userRepository.existsById(userId)) {
+            throw new NotFoundException(
+                    "User with id " + userId + " not found");
+        }
+
+        userRepository.deleteById(userId);
     }
 
     @Override
@@ -77,14 +102,5 @@ public class UserServiceImpl implements UserService {
                 .stream()
                 .map(UserMapper::toUserDto)
                 .toList();
-    }
-
-    @Override
-    public void delete(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("User not found");
-        }
-
-        userRepository.deleteById(userId);
     }
 }

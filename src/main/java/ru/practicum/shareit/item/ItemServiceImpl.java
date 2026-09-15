@@ -27,7 +27,8 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto create(Long userId, ItemDto itemDto) {
         User owner = userRepository.findById(userId)
                 .orElseThrow(() ->
-                        new NotFoundException("User not found"));
+                        new NotFoundException(
+                                "User with id " + userId + " not found"));
 
         if (itemDto.getName() == null || itemDto.getName().isBlank()) {
             throw new ValidationException("Item name cannot be empty");
@@ -59,18 +60,30 @@ public class ItemServiceImpl implements ItemService {
 
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() ->
-                        new NotFoundException("Item not found"));
+                        new NotFoundException(
+                                "Item with id " + itemId + " not found"));
 
         if (item.getOwner() == null
                 || !item.getOwner().getId().equals(userId)) {
-            throw new NotFoundException("Item not found");
+            throw new NotFoundException(
+                    "User with id " + userId
+                            + " is not the owner of item with id "
+                            + itemId);
         }
 
         if (itemDto.getName() != null) {
+            if (itemDto.getName().isBlank()) {
+                throw new ValidationException(
+                        "Item name cannot be empty");
+            }
             item.setName(itemDto.getName());
         }
 
         if (itemDto.getDescription() != null) {
+            if (itemDto.getDescription().isBlank()) {
+                throw new ValidationException(
+                        "Item description cannot be empty");
+            }
             item.setDescription(itemDto.getDescription());
         }
 
@@ -87,7 +100,9 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto getById(Long itemId) {
         Item item = itemRepository.findById(itemId)
                 .orElseThrow(() ->
-                        new NotFoundException("Item not found"));
+                        new NotFoundException(
+                                "Item with id " + itemId + " not found"));
+
 
         return ItemMapper.toItemDto(item);
     }
@@ -95,7 +110,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getByOwner(Long userId) {
         if (!userRepository.existsById(userId)) {
-            throw new NotFoundException("User not found");
+            throw new NotFoundException("User with id " + userId + " not found");
         }
 
         return itemRepository.findByOwnerId(userId)
