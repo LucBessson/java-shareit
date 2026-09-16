@@ -12,7 +12,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import ru.practicum.shareit.item.ItemRepository;
 
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,9 +41,11 @@ class UserControllerTest {
 
     @Test
     void shouldCreateUser() throws Exception {
+        String json = "{\"name\":\"John Doe\",\"email\":\"john@example.com\"}";
+
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"John Doe\",\"email\":\"john@example.com\"}"))
+                        .content(json))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name").value("John Doe"))
@@ -49,17 +54,21 @@ class UserControllerTest {
 
     @Test
     void shouldRejectUserWithoutEmail() throws Exception {
+        String json = "{\"name\":\"John Doe\"}";
+
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"John Doe\"}"))
+                        .content(json))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void shouldRejectInvalidEmail() throws Exception {
+        String json = "{\"name\":\"John Doe\",\"email\":\"john.com\"}";
+
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"John Doe\",\"email\":\"john.com\"}"))
+                        .content(json))
                 .andExpect(status().isBadRequest());
     }
 
@@ -67,19 +76,22 @@ class UserControllerTest {
     void shouldRejectDuplicateEmail() throws Exception {
         createUser("john@example.com");
 
+        String json = "{\"name\":\"Another John\",\"email\":\"john@example.com\"}";
+
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Another John\",\"email\":\"john@example.com\"}"))
+                        .content(json))
                 .andExpect(status().isConflict());
     }
 
     @Test
     void shouldUpdateUserEmail() throws Exception {
         long userId = createUser("old@example.com");
+        String json = "{\"email\":\"new@example.com\"}";
 
         mockMvc.perform(patch("/users/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"email\":\"new@example.com\"}"))
+                        .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId))
                 .andExpect(jsonPath("$.email").value("new@example.com"));
@@ -88,10 +100,11 @@ class UserControllerTest {
     @Test
     void shouldUpdateUserName() throws Exception {
         long userId = createUser("john@example.com");
+        String json = "{\"name\":\"Updated John\"}";
 
         mockMvc.perform(patch("/users/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Updated John\"}"))
+                        .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId))
                 .andExpect(jsonPath("$.name").value("Updated John"))
@@ -126,9 +139,11 @@ class UserControllerTest {
     }
 
     private long createUser(String email) throws Exception {
+        String json = "{\"name\":\"John Doe\",\"email\":\"" + email + "\"}";
+
         MvcResult result = mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"John Doe\",\"email\":\"" + email + "\"}"))
+                        .content(json))
                 .andExpect(status().isCreated())
                 .andReturn();
 

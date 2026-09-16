@@ -13,7 +13,6 @@ import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.UserRepository;
 
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -50,10 +49,12 @@ class BookingControllerTest {
         long bookerId = createUser("booker@example.com");
         long itemId = createItem(ownerId, true);
 
+        String json = "{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":" + itemId + "}";
+
         mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":" + itemId + "}"))
+                        .content(json))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.item.id").value(itemId))
@@ -66,10 +67,12 @@ class BookingControllerTest {
         long ownerId = createUser("owner@example.com");
         long itemId = createItem(ownerId, true);
 
+        String json = "{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":" + itemId + "}";
+
         mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", ownerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":" + itemId + "}"))
+                        .content(json))
                 .andExpect(status().isConflict());
     }
 
@@ -79,19 +82,23 @@ class BookingControllerTest {
         long bookerId = createUser("booker@example.com");
         long itemId = createItem(ownerId, false);
 
+        String json = "{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":" + itemId + "}";
+
         mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":" + itemId + "}"))
+                        .content(json))
                 .andExpect(status().isConflict());
     }
 
     @Test
     void shouldReturn404ForUnknownUser() throws Exception {
+        String json = "{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":999999}";
+
         mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", 999999L)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":999999}"))
+                        .content(json))
                 .andExpect(status().isNotFound());
     }
 
@@ -99,10 +106,12 @@ class BookingControllerTest {
     void shouldReturn404ForUnknownItem() throws Exception {
         long bookerId = createUser("booker@example.com");
 
+        String json = "{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":999999}";
+
         mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":999999}"))
+                        .content(json))
                 .andExpect(status().isNotFound());
     }
 
@@ -112,10 +121,12 @@ class BookingControllerTest {
         long bookerId = createUser("booker@example.com");
         long itemId = createItem(ownerId, true);
 
+        String json = "{\"start\":\"2099-01-01T12:00:00\",\"end\":\"2099-01-01T10:00:00\",\"itemId\":" + itemId + "}";
+
         mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"start\":\"2099-01-01T12:00:00\",\"end\":\"2099-01-01T10:00:00\",\"itemId\":" + itemId + "}"))
+                        .content(json))
                 .andExpect(status().isBadRequest());
     }
 
@@ -185,10 +196,12 @@ class BookingControllerTest {
         long bookerId = createUser("booker@example.com");
         long itemId = createItem(ownerId, true);
 
+        String json = "{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T10:00:00\",\"itemId\":" + itemId + "}";
+
         mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T10:00:00\",\"itemId\":" + itemId + "}"))
+                        .content(json))
                 .andExpect(status().isBadRequest());
     }
 
@@ -230,9 +243,11 @@ class BookingControllerTest {
     }
 
     private long createUser(String email) throws Exception {
+        String json = "{\"name\":\"Test User\",\"email\":\"" + email + "\"}";
+
         MvcResult result = mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Test User\",\"email\":\"" + email + "\"}"))
+                        .content(json))
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -240,10 +255,12 @@ class BookingControllerTest {
     }
 
     private long createItem(long ownerId, boolean available) throws Exception {
+        String json = "{\"name\":\"Drill\",\"description\":\"Power drill\",\"available\":" + available + "}";
+
         MvcResult result = mockMvc.perform(post("/items")
                         .header("X-Sharer-User-Id", ownerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Drill\",\"description\":\"Power drill\",\"available\":" + available + "}"))
+                        .content(json))
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -251,10 +268,12 @@ class BookingControllerTest {
     }
 
     private long createBooking(long bookerId, long itemId) throws Exception {
+        String json = "{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":" + itemId + "}";
+
         MvcResult result = mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":" + itemId + "}"))
+                        .content(json))
                 .andExpect(status().isCreated())
                 .andReturn();
 

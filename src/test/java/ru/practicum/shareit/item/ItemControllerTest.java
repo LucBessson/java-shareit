@@ -12,7 +12,10 @@ import org.springframework.test.web.servlet.MvcResult;
 import ru.practicum.shareit.user.UserRepository;
 
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -39,11 +42,12 @@ class ItemControllerTest {
     @Test
     void shouldCreateItem() throws Exception {
         long userId = createUser("john@example.com");
+        String json = "{\"name\":\"Drill\",\"description\":\"Power drill\",\"available\":true}";
 
         MvcResult result = mockMvc.perform(post("/items")
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Drill\",\"description\":\"Power drill\",\"available\":true}"))
+                        .content(json))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name").value("Drill"))
@@ -56,33 +60,36 @@ class ItemControllerTest {
     @Test
     void shouldRejectItemWithoutAvailable() throws Exception {
         long userId = createUser("john@example.com");
+        String json = "{\"name\":\"Drill\",\"description\":\"Power drill\"}";
 
         mockMvc.perform(post("/items")
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Drill\",\"description\":\"Power drill\"}"))
+                        .content(json))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void shouldRejectItemWithoutName() throws Exception {
         long userId = createUser("john@example.com");
+        String json = "{\"description\":\"Power drill\",\"available\":true}";
 
         mockMvc.perform(post("/items")
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"description\":\"Power drill\",\"available\":true}"))
+                        .content(json))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     void shouldCreateUnavailableItem() throws Exception {
         long userId = createUser("john@example.com");
+        String json = "{\"name\":\"Drill\",\"description\":\"Power drill\",\"available\":false}";
 
         mockMvc.perform(post("/items")
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Drill\",\"description\":\"Power drill\",\"available\":false}"))
+                        .content(json))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.available").value(false));
     }
@@ -91,11 +98,12 @@ class ItemControllerTest {
     void shouldUpdateItem() throws Exception {
         long userId = createUser("john@example.com");
         long itemId = createItem(userId);
+        String json = "{\"name\":\"Updated drill\",\"available\":false}";
 
         mockMvc.perform(patch("/items/{itemId}", itemId)
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Updated drill\",\"available\":false}"))
+                        .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(itemId))
                 .andExpect(jsonPath("$.name").value("Updated drill"))
@@ -144,9 +152,11 @@ class ItemControllerTest {
     }
 
     private long createUser(String email) throws Exception {
+        String json = "{\"name\":\"John Doe\",\"email\":\"" + email + "\"}";
+
         MvcResult result = mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"John Doe\",\"email\":\"" + email + "\"}"))
+                        .content(json))
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -154,10 +164,12 @@ class ItemControllerTest {
     }
 
     private long createItem(long userId) throws Exception {
+        String json = "{\"name\":\"Drill\",\"description\":\"Power drill\",\"available\":true}";
+
         MvcResult result = mockMvc.perform(post("/items")
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"Drill\",\"description\":\"Power drill\",\"available\":true}"))
+                        .content(json))
                 .andExpect(status().isCreated())
                 .andReturn();
 
