@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.exception.ConflictException;
+import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
 import ru.practicum.shareit.item.ItemMapper;
@@ -121,10 +122,9 @@ public class BookingServiceImpl implements BookingService {
                                         + " not found"));
 
         if (!booking.getItem().getOwner().getId().equals(userId)) {
-            throw new NotFoundException(
-                    "Booking with id "
-                            + bookingId
-                            + " not found");
+            throw new ForbiddenException(
+                    "User with id " + userId
+                            + " is not the owner of the item");
         }
 
         if (booking.getStatus() != BookingStatus.WAITING) {
