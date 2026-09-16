@@ -15,7 +15,6 @@ import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -214,51 +213,45 @@ public class BookingServiceImpl implements BookingService {
         );
 
         return switch (state.toUpperCase()) {
-            case "ALL" ->
-                    bookingRepository.findByBooker_Id(
-                            userId, sort);
+            case "ALL" -> bookingRepository.findByBooker_Id(
+                    userId, sort);
 
-            case "CURRENT" ->
-                    bookingRepository
-                            .findByBooker_IdAndStartIsBeforeAndEndIsAfter(
-                                    userId,
-                                    now,
-                                    now,
-                                    sort);
+            case "CURRENT" -> bookingRepository
+                    .findByBooker_IdAndStartIsBeforeAndEndIsAfter(
+                            userId,
+                            now,
+                            now,
+                            sort);
 
-            case "PAST" ->
-                    bookingRepository
-                            .findByBooker_IdAndEndIsBefore(
-                                    userId,
-                                    now,
-                                    sort);
+            case "PAST" -> bookingRepository
+                    .findByBooker_IdAndEndIsBefore(
+                            userId,
+                            now,
+                            sort);
 
-            case "FUTURE" ->
-                    bookingRepository
-                            .findByBooker_IdAndStartIsAfter(
-                                    userId,
-                                    now,
-                                    sort);
+            case "FUTURE" -> bookingRepository
+                    .findByBooker_IdAndStartIsAfter(
+                            userId,
+                            now,
+                            sort);
 
-            case "WAITING" ->
-                    bookingRepository.findByBooker_Id(
-                                    userId,
-                                    sort)
-                            .stream()
-                            .filter(booking ->
-                                    booking.getStatus()
-                                            == BookingStatus.WAITING)
-                            .toList();
+            case "WAITING" -> bookingRepository.findByBooker_Id(
+                            userId,
+                            sort)
+                    .stream()
+                    .filter(booking ->
+                            booking.getStatus()
+                                    == BookingStatus.WAITING)
+                    .toList();
 
-            case "REJECTED" ->
-                    bookingRepository.findByBooker_Id(
-                                    userId,
-                                    sort)
-                            .stream()
-                            .filter(booking ->
-                                    booking.getStatus()
-                                            == BookingStatus.REJECTED)
-                            .toList();
+            case "REJECTED" -> bookingRepository.findByBooker_Id(
+                            userId,
+                            sort)
+                    .stream()
+                    .filter(booking ->
+                            booking.getStatus()
+                                    == BookingStatus.REJECTED)
+                    .toList();
 
             default -> throw new ValidationException(
                     "Unknown state: " + state);

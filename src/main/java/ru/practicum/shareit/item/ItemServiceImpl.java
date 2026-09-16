@@ -3,7 +3,6 @@ package ru.practicum.shareit.item;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
-import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
@@ -226,8 +225,7 @@ public class ItemServiceImpl implements ItemService {
         BookingDto lastBooking = null;
         BookingDto nextBooking = null;
 
-        if (userId != null
-                && item.getOwner().getId().equals(userId)) {
+        if (item.getOwner().getId().equals(userId)) {
 
             LocalDateTime now = LocalDateTime.now();
 
