@@ -121,6 +121,13 @@ public class BookingServiceImpl implements BookingService {
                                         + bookingId
                                         + " not found"));
 
+        if (booking.getBooker().getId().equals(userId)) {
+            throw new NotFoundException(
+                    "Booking with id "
+                            + bookingId
+                            + " not found");
+        }
+
         if (!booking.getItem().getOwner().getId().equals(userId)) {
             throw new ForbiddenException(
                     "User with id " + userId
