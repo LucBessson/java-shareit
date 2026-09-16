@@ -51,11 +51,9 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "start": "2099-01-01T10:00:00",
-                                  "end": "2099-01-01T12:00:00",
-                                  "itemId": %d
-                                }
+                                {"start": "2099-01-01T10:00:00",
+                                 "end": "2099-01-01T12:00:00",
+                                 "itemId": %d}
                                 """.formatted(itemId)))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
@@ -73,11 +71,9 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", ownerId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "start": "2099-01-01T10:00:00",
-                                  "end": "2099-01-01T12:00:00",
-                                  "itemId": %d
-                                }
+                                {"start": "2099-01-01T10:00:00",
+                                 "end": "2099-01-01T12:00:00",
+                                 "itemId": %d}
                                 """.formatted(itemId)))
                 .andExpect(status().isConflict());
     }
@@ -92,11 +88,9 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "start": "2099-01-01T10:00:00",
-                                  "end": "2099-01-01T12:00:00",
-                                  "itemId": %d
-                                }
+                                {"start": "2099-01-01T10:00:00",
+                                 "end": "2099-01-01T12:00:00",
+                                 "itemId": %d}
                                 """.formatted(itemId)))
                 .andExpect(status().isConflict());
     }
@@ -107,11 +101,9 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", 999999L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "start": "2099-01-01T10:00:00",
-                                  "end": "2099-01-01T12:00:00",
-                                  "itemId": 999999
-                                }
+                                {"start": "2099-01-01T10:00:00",
+                                 "end": "2099-01-01T12:00:00",
+                                 "itemId": 999999}
                                 """))
                 .andExpect(status().isNotFound());
     }
@@ -124,11 +116,9 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "start": "2099-01-01T10:00:00",
-                                  "end": "2099-01-01T12:00:00",
-                                  "itemId": 999999
-                                }
+                                {"start": "2099-01-01T10:00:00",
+                                 "end": "2099-01-01T12:00:00",
+                                 "itemId": 999999}
                                 """))
                 .andExpect(status().isNotFound());
     }
@@ -143,11 +133,9 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "start": "2099-01-01T12:00:00",
-                                  "end": "2099-01-01T10:00:00",
-                                  "itemId": %d
-                                }
+                                {"start": "2099-01-01T12:00:00",
+                                 "end": "2099-01-01T10:00:00",
+                                 "itemId": %d}
                                 """.formatted(itemId)))
                 .andExpect(status().isBadRequest());
     }
@@ -225,11 +213,9 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "start": "2099-01-01T10:00:00",
-                                  "end": "2099-01-01T10:00:00",
-                                  "itemId": %d
-                                }
+                                {"start": "2099-01-01T10:00:00",
+                                 "end": "2099-01-01T10:00:00",
+                                 "itemId": %d}
                                 """.formatted(itemId)))
                 .andExpect(status().isBadRequest());
     }
@@ -275,10 +261,8 @@ class BookingControllerTest {
         MvcResult result = mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Test User",
-                                  "email": "%s"
-                                }
+                                {"name": "Test User",
+                                 "email": "%s"}
                                 """.formatted(email)))
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -291,11 +275,9 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", ownerId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Drill",
-                                  "description": "Power drill",
-                                  "available": %s
-                                }
+                                {"name": "Drill",
+                                 "description": "Power drill",
+                                 "available": %s}
                                 """.formatted(available)))
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -308,11 +290,9 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "start": "2099-01-01T10:00:00",
-                                  "end": "2099-01-01T12:00:00",
-                                  "itemId": %d
-                                }
+                                {"start": "2099-01-01T10:00:00",
+                                 "end": "2099-01-01T12:00:00",
+                                 "itemId": %d}
                                 """.formatted(itemId)))
                 .andExpect(status().isCreated())
                 .andReturn();

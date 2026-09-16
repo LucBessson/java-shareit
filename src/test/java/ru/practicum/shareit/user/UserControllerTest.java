@@ -43,10 +43,8 @@ class UserControllerTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "John Doe",
-                                  "email": "john@example.com"
-                                }
+                                {"name": "John Doe",
+                                 "email": "john@example.com"}
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
@@ -59,9 +57,7 @@ class UserControllerTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "John Doe"
-                                }
+                                {"name": "John Doe"}
                                 """))
                 .andExpect(status().isBadRequest());
     }
@@ -71,10 +67,8 @@ class UserControllerTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "John Doe",
-                                  "email": "john.com"
-                                }
+                                {"name": "John Doe",
+                                 "email": "john.com"}
                                 """))
                 .andExpect(status().isBadRequest());
     }
@@ -86,10 +80,8 @@ class UserControllerTest {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Another John",
-                                  "email": "john@example.com"
-                                }
+                                {"name": "Another John",
+                                 "email": "john@example.com"}
                                 """))
                 .andExpect(status().isConflict());
     }
@@ -101,9 +93,7 @@ class UserControllerTest {
         mockMvc.perform(patch("/users/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "email": "new@example.com"
-                                }
+                                {"email": "new@example.com"}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId))
@@ -117,9 +107,7 @@ class UserControllerTest {
         mockMvc.perform(patch("/users/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Updated John"
-                                }
+                                {"name": "Updated John"}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId))
@@ -158,10 +146,8 @@ class UserControllerTest {
         MvcResult result = mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "John Doe",
-                                  "email": "%s"
-                                }
+                                {"name": "John Doe",
+                                 "email": "%s"}
                                 """.formatted(email)))
                 .andExpect(status().isCreated())
                 .andReturn();

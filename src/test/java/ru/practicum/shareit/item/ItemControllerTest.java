@@ -46,11 +46,9 @@ class ItemControllerTest {
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Drill",
-                                  "description": "Power drill",
-                                  "available": true
-                                }
+                                {"name": "Drill",
+                                 "description": "Power drill",
+                                 "available": true}
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
@@ -69,10 +67,8 @@ class ItemControllerTest {
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Drill",
-                                  "description": "Power drill"
-                                }
+                                {"name": "Drill",
+                                 "description": "Power drill"}
                                 """))
                 .andExpect(status().isBadRequest());
     }
@@ -85,10 +81,8 @@ class ItemControllerTest {
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "description": "Power drill",
-                                  "available": true
-                                }
+                                {"description": "Power drill",
+                                 "available": true}
                                 """))
                 .andExpect(status().isBadRequest());
     }
@@ -101,11 +95,9 @@ class ItemControllerTest {
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Drill",
-                                  "description": "Power drill",
-                                  "available": false
-                                }
+                                {"name": "Drill",
+                                 "description": "Power drill",
+                                 "available": false}
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.available").value(false));
@@ -114,16 +106,14 @@ class ItemControllerTest {
     @Test
     void shouldUpdateItem() throws Exception {
         long userId = createUser("john@example.com");
-        long itemId = createItem(userId, "drill@example.com");
+        long itemId = createItem(userId);
 
         mockMvc.perform(patch("/items/{itemId}", itemId)
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Updated drill",
-                                  "available": false
-                                }
+                                {"name": "Updated drill",
+                                 "available": false}
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(itemId))
@@ -134,7 +124,7 @@ class ItemControllerTest {
     @Test
     void shouldReturnItem() throws Exception {
         long userId = createUser("john@example.com");
-        long itemId = createItem(userId, "drill@example.com");
+        long itemId = createItem(userId);
 
         mockMvc.perform(get("/items/{itemId}", itemId))
                 .andExpect(status().isOk())
@@ -151,7 +141,7 @@ class ItemControllerTest {
     @Test
     void shouldReturnOwnerItems() throws Exception {
         long userId = createUser("john@example.com");
-        createItem(userId, "drill@example.com");
+        createItem(userId);
 
         mockMvc.perform(get("/items")
                         .header("X-Sharer-User-Id", userId))
@@ -163,7 +153,7 @@ class ItemControllerTest {
     @Test
     void shouldSearchItems() throws Exception {
         long userId = createUser("john@example.com");
-        createItem(userId, "drill@example.com");
+        createItem(userId);
 
         mockMvc.perform(get("/items/search")
                         .param("text", "drill"))
@@ -176,10 +166,8 @@ class ItemControllerTest {
         MvcResult result = mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "John Doe",
-                                  "email": "%s"
-                                }
+                                {"name": "John Doe",
+                                 "email": "%s"}
                                 """.formatted(email)))
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -187,16 +175,14 @@ class ItemControllerTest {
         return extractId(result);
     }
 
-    private long createItem(long userId, String email) throws Exception {
+    private long createItem(long userId) throws Exception {
         MvcResult result = mockMvc.perform(post("/items")
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {
-                                  "name": "Drill",
-                                  "description": "Power drill",
-                                  "available": true
-                                }
+                                {"name": "Drill",
+                                 "description": "Power drill",
+                                 "available": true}
                                 """))
                 .andExpect(status().isCreated())
                 .andReturn();
