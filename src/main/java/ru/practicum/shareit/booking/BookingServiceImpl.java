@@ -54,6 +54,16 @@ public class BookingServiceImpl implements BookingService {
                     "Start must be before end");
         }
 
+        if (request.getStart().isBefore(LocalDateTime.now())) {
+            throw new ValidationException(
+                    "Booking start date cannot be in the past");
+        }
+
+        if (request.getEnd().isBefore(LocalDateTime.now())) {
+            throw new ValidationException(
+                    "Booking end date cannot be in the past");
+        }
+
         if (request.getItemId() == null) {
             throw new ValidationException(
                     "Item id is required");
@@ -67,8 +77,19 @@ public class BookingServiceImpl implements BookingService {
                                         + " not found"));
 
         if (!item.isAvailable()) {
-            throw new ConflictException(
+            throw new ValidationException(
                     "Item is not available for booking");
+        }
+
+        if (request.getStart() == null
+                || request.getEnd() == null) {
+            throw new ValidationException(
+                    "Start and end dates are required");
+        }
+
+        if (!request.getStart().isBefore(request.getEnd())) {
+            throw new ValidationException(
+                    "Start must be before end");
         }
 
         if (item.getOwner().getId().equals(userId)) {
