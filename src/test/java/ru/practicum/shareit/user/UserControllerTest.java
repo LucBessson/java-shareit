@@ -33,19 +33,14 @@ class UserControllerTest {
     @BeforeEach
     void setUp() {
         itemRepository.deleteAll();
-
-        userRepository.findAll()
-                .forEach(user -> userRepository.deleteById(user.getId()));
+        userRepository.deleteAll();
     }
 
     @Test
     void shouldCreateUser() throws Exception {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name": "John Doe",
-                                 "email": "john@example.com"}
-                                """))
+                        .content("{\"name\":\"John Doe\",\"email\":\"john@example.com\"}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name").value("John Doe"))
@@ -56,9 +51,7 @@ class UserControllerTest {
     void shouldRejectUserWithoutEmail() throws Exception {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name": "John Doe"}
-                                """))
+                        .content("{\"name\":\"John Doe\"}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -66,10 +59,7 @@ class UserControllerTest {
     void shouldRejectInvalidEmail() throws Exception {
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name": "John Doe",
-                                 "email": "john.com"}
-                                """))
+                        .content("{\"name\":\"John Doe\",\"email\":\"john.com\"}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -79,10 +69,7 @@ class UserControllerTest {
 
         mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name": "Another John",
-                                 "email": "john@example.com"}
-                                """))
+                        .content("{\"name\":\"Another John\",\"email\":\"john@example.com\"}"))
                 .andExpect(status().isConflict());
     }
 
@@ -92,9 +79,7 @@ class UserControllerTest {
 
         mockMvc.perform(patch("/users/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"email": "new@example.com"}
-                                """))
+                        .content("{\"email\":\"new@example.com\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId))
                 .andExpect(jsonPath("$.email").value("new@example.com"));
@@ -106,9 +91,7 @@ class UserControllerTest {
 
         mockMvc.perform(patch("/users/{userId}", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name": "Updated John"}
-                                """))
+                        .content("{\"name\":\"Updated John\"}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(userId))
                 .andExpect(jsonPath("$.name").value("Updated John"))
@@ -145,10 +128,7 @@ class UserControllerTest {
     private long createUser(String email) throws Exception {
         MvcResult result = mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name": "John Doe",
-                                 "email": "%s"}
-                                """.formatted(email)))
+                        .content("{\"name\":\"John Doe\",\"email\":\"" + email + "\"}"))
                 .andExpect(status().isCreated())
                 .andReturn();
 

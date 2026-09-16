@@ -33,9 +33,7 @@ class ItemControllerTest {
     @BeforeEach
     void setUp() {
         itemRepository.deleteAll();
-
-        userRepository.findAll()
-                .forEach(user -> userRepository.deleteById(user.getId()));
+        userRepository.deleteAll();
     }
 
     @Test
@@ -45,11 +43,7 @@ class ItemControllerTest {
         MvcResult result = mockMvc.perform(post("/items")
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name": "Drill",
-                                 "description": "Power drill",
-                                 "available": true}
-                                """))
+                        .content("{\"name\":\"Drill\",\"description\":\"Power drill\",\"available\":true}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name").value("Drill"))
@@ -66,10 +60,7 @@ class ItemControllerTest {
         mockMvc.perform(post("/items")
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name": "Drill",
-                                 "description": "Power drill"}
-                                """))
+                        .content("{\"name\":\"Drill\",\"description\":\"Power drill\"}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -80,10 +71,7 @@ class ItemControllerTest {
         mockMvc.perform(post("/items")
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"description": "Power drill",
-                                 "available": true}
-                                """))
+                        .content("{\"description\":\"Power drill\",\"available\":true}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -94,11 +82,7 @@ class ItemControllerTest {
         mockMvc.perform(post("/items")
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name": "Drill",
-                                 "description": "Power drill",
-                                 "available": false}
-                                """))
+                        .content("{\"name\":\"Drill\",\"description\":\"Power drill\",\"available\":false}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.available").value(false));
     }
@@ -111,10 +95,7 @@ class ItemControllerTest {
         mockMvc.perform(patch("/items/{itemId}", itemId)
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name": "Updated drill",
-                                 "available": false}
-                                """))
+                        .content("{\"name\":\"Updated drill\",\"available\":false}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(itemId))
                 .andExpect(jsonPath("$.name").value("Updated drill"))
@@ -165,10 +146,7 @@ class ItemControllerTest {
     private long createUser(String email) throws Exception {
         MvcResult result = mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name": "John Doe",
-                                 "email": "%s"}
-                                """.formatted(email)))
+                        .content("{\"name\":\"John Doe\",\"email\":\"" + email + "\"}"))
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -179,11 +157,7 @@ class ItemControllerTest {
         MvcResult result = mockMvc.perform(post("/items")
                         .header("X-Sharer-User-Id", userId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name": "Drill",
-                                 "description": "Power drill",
-                                 "available": true}
-                                """))
+                        .content("{\"name\":\"Drill\",\"description\":\"Power drill\",\"available\":true}"))
                 .andExpect(status().isCreated())
                 .andReturn();
 

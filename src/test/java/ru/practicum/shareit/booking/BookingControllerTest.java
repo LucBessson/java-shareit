@@ -13,7 +13,10 @@ import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.UserRepository;
 
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -50,11 +53,7 @@ class BookingControllerTest {
         mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"start": "2099-01-01T10:00:00",
-                                 "end": "2099-01-01T12:00:00",
-                                 "itemId": %d}
-                                """.formatted(itemId)))
+                        .content("{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":" + itemId + "}"))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.item.id").value(itemId))
@@ -70,11 +69,7 @@ class BookingControllerTest {
         mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", ownerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"start": "2099-01-01T10:00:00",
-                                 "end": "2099-01-01T12:00:00",
-                                 "itemId": %d}
-                                """.formatted(itemId)))
+                        .content("{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":" + itemId + "}"))
                 .andExpect(status().isConflict());
     }
 
@@ -87,11 +82,7 @@ class BookingControllerTest {
         mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"start": "2099-01-01T10:00:00",
-                                 "end": "2099-01-01T12:00:00",
-                                 "itemId": %d}
-                                """.formatted(itemId)))
+                        .content("{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":" + itemId + "}"))
                 .andExpect(status().isConflict());
     }
 
@@ -100,11 +91,7 @@ class BookingControllerTest {
         mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", 999999L)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"start": "2099-01-01T10:00:00",
-                                 "end": "2099-01-01T12:00:00",
-                                 "itemId": 999999}
-                                """))
+                        .content("{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":999999}"))
                 .andExpect(status().isNotFound());
     }
 
@@ -115,11 +102,7 @@ class BookingControllerTest {
         mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"start": "2099-01-01T10:00:00",
-                                 "end": "2099-01-01T12:00:00",
-                                 "itemId": 999999}
-                                """))
+                        .content("{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":999999}"))
                 .andExpect(status().isNotFound());
     }
 
@@ -132,11 +115,7 @@ class BookingControllerTest {
         mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"start": "2099-01-01T12:00:00",
-                                 "end": "2099-01-01T10:00:00",
-                                 "itemId": %d}
-                                """.formatted(itemId)))
+                        .content("{\"start\":\"2099-01-01T12:00:00\",\"end\":\"2099-01-01T10:00:00\",\"itemId\":" + itemId + "}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -160,7 +139,6 @@ class BookingControllerTest {
         long ownerId = createUser("owner@example.com");
         long bookerId = createUser("booker@example.com");
         long strangerId = createUser("stranger@example.com");
-
         long itemId = createItem(ownerId, true);
         long bookingId = createBooking(bookerId, itemId);
 
@@ -174,7 +152,6 @@ class BookingControllerTest {
         long ownerId = createUser("owner@example.com");
         long bookerId = createUser("booker@example.com");
         long itemId = createItem(ownerId, true);
-
         long bookingId = createBooking(bookerId, itemId);
 
         mockMvc.perform(get("/bookings")
@@ -191,7 +168,6 @@ class BookingControllerTest {
         long ownerId = createUser("owner@example.com");
         long bookerId = createUser("booker@example.com");
         long itemId = createItem(ownerId, true);
-
         long bookingId = createBooking(bookerId, itemId);
 
         mockMvc.perform(get("/bookings/owner")
@@ -212,11 +188,7 @@ class BookingControllerTest {
         mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"start": "2099-01-01T10:00:00",
-                                 "end": "2099-01-01T10:00:00",
-                                 "itemId": %d}
-                                """.formatted(itemId)))
+                        .content("{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T10:00:00\",\"itemId\":" + itemId + "}"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -260,10 +232,7 @@ class BookingControllerTest {
     private long createUser(String email) throws Exception {
         MvcResult result = mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name": "Test User",
-                                 "email": "%s"}
-                                """.formatted(email)))
+                        .content("{\"name\":\"Test User\",\"email\":\"" + email + "\"}"))
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -274,11 +243,7 @@ class BookingControllerTest {
         MvcResult result = mockMvc.perform(post("/items")
                         .header("X-Sharer-User-Id", ownerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name": "Drill",
-                                 "description": "Power drill",
-                                 "available": %s}
-                                """.formatted(available)))
+                        .content("{\"name\":\"Drill\",\"description\":\"Power drill\",\"available\":" + available + "}"))
                 .andExpect(status().isCreated())
                 .andReturn();
 
@@ -289,11 +254,7 @@ class BookingControllerTest {
         MvcResult result = mockMvc.perform(post("/bookings")
                         .header("X-Sharer-User-Id", bookerId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"start": "2099-01-01T10:00:00",
-                                 "end": "2099-01-01T12:00:00",
-                                 "itemId": %d}
-                                """.formatted(itemId)))
+                        .content("{\"start\":\"2099-01-01T10:00:00\",\"end\":\"2099-01-01T12:00:00\",\"itemId\":" + itemId + "}"))
                 .andExpect(status().isCreated())
                 .andReturn();
 
