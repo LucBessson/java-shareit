@@ -8,11 +8,9 @@ import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.ForbiddenException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
-import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
 
 import java.time.LocalDateTime;
@@ -82,30 +80,20 @@ public class BookingServiceImpl implements BookingService {
                     "Item is not available for booking");
         }
 
-        if (request.getStart() == null
-                || request.getEnd() == null) {
-            throw new ValidationException(
-                    "Start and end dates are required");
-        }
-
-        if (!request.getStart().isBefore(request.getEnd())) {
-            throw new ValidationException(
-                    "Start must be before end");
-        }
-
         if (item.getOwner().getId().equals(userId)) {
             throw new ConflictException(
                     "Owner cannot book own item");
         }
 
-        Booking booking = new Booking();
-        booking.setStart(request.getStart());
-        booking.setEnd(request.getEnd());
-        booking.setItem(item);
-        booking.setBooker(booker);
-        booking.setStatus(BookingStatus.WAITING);
+        Booking booking = BookingMapper.toBooking(
+                request,
+                item,
+                booker
+        );
 
-        return toDto(bookingRepository.save(booking));
+        return BookingMapper.toBookingDto(
+                bookingRepository.save(booking)
+        );
     }
 
     @Override
@@ -145,7 +133,9 @@ public class BookingServiceImpl implements BookingService {
                         : BookingStatus.REJECTED
         );
 
-        return toDto(bookingRepository.save(booking));
+        return BookingMapper.toBookingDto(
+                bookingRepository.save(booking)
+        );
     }
 
     @Override
@@ -173,7 +163,7 @@ public class BookingServiceImpl implements BookingService {
                             + " not found");
         }
 
-        return toDto(booking);
+        return BookingMapper.toBookingDto(booking);
     }
 
     @Override
@@ -188,10 +178,11 @@ public class BookingServiceImpl implements BookingService {
         List<Booking> bookings = getBookerBookings(
                 userId,
                 state,
-                now);
+                now
+        );
 
         return bookings.stream()
-                .map(this::toDto)
+                .map(BookingMapper::toBookingDto)
                 .toList();
     }
 
@@ -212,21 +203,58 @@ public class BookingServiceImpl implements BookingService {
                 .map(Item::getId)
                 .toList();
 
-        List<Booking> bookings =
-                bookingRepository.findByItem_IdIn(
-                        itemIds,
-                        Sort.by(
-                                Sort.Direction.DESC,
-                                "start"
-                        )
-                );
+        Sort sort = Sort.by(
+                Sort.Direction.DESC,
+                "start"
+        );
 
-        return filterByState(
-                bookings,
-                state,
-                LocalDateTime.now()
-        ).stream()
-                .map(this::toDto)
+        LocalDateTime now = LocalDateTime.now();
+
+        List<Booking> bookings = switch (state.toUpperCase()) {
+            case "ALL" -> bookingRepository.findByItem_IdIn(
+                    itemIds,
+                    sort
+            );
+
+            case "CURRENT" -> bookingRepository
+                    .findByItem_IdInAndStartIsBeforeAndEndIsAfter(
+                            itemIds,
+                            now,
+                            now,
+                            sort
+                    );
+
+            case "PAST" -> bookingRepository.findByItem_IdInAndEndIsBefore(
+                    itemIds,
+                    now,
+                    sort
+            );
+
+            case "FUTURE" -> bookingRepository.findByItem_IdInAndStartIsAfter(
+                    itemIds,
+                    now,
+                    sort
+            );
+
+            case "WAITING" -> bookingRepository.findByItem_IdInAndStatus(
+                    itemIds,
+                    BookingStatus.WAITING,
+                    sort
+            );
+
+            case "REJECTED" -> bookingRepository.findByItem_IdInAndStatus(
+                    itemIds,
+                    BookingStatus.REJECTED,
+                    sort
+            );
+
+            default -> throw new ValidationException(
+                    "Unknown state: " + state
+            );
+        };
+
+        return bookings.stream()
+                .map(BookingMapper::toBookingDto)
                 .toList();
     }
 
@@ -242,31 +270,34 @@ public class BookingServiceImpl implements BookingService {
 
         return switch (state.toUpperCase()) {
             case "ALL" -> bookingRepository.findByBooker_Id(
-                    userId, sort);
+                    userId,
+                    sort
+            );
 
             case "CURRENT" -> bookingRepository
                     .findByBooker_IdAndStartIsBeforeAndEndIsAfter(
                             userId,
                             now,
                             now,
-                            sort);
+                            sort
+                    );
 
-            case "PAST" -> bookingRepository
-                    .findByBooker_IdAndEndIsBefore(
-                            userId,
-                            now,
-                            sort);
+            case "PAST" -> bookingRepository.findByBooker_IdAndEndIsBefore(
+                    userId,
+                    now,
+                    sort
+            );
 
-            case "FUTURE" -> bookingRepository
-                    .findByBooker_IdAndStartIsAfter(
-                            userId,
-                            now,
-                            sort);
+            case "FUTURE" -> bookingRepository.findByBooker_IdAndStartIsAfter(
+                    userId,
+                    now,
+                    sort
+            );
 
             case "WAITING" -> bookingRepository.findByBooker_Id(
                             userId,
-                            sort)
-                    .stream()
+                            sort
+                    ).stream()
                     .filter(booking ->
                             booking.getStatus()
                                     == BookingStatus.WAITING)
@@ -274,56 +305,16 @@ public class BookingServiceImpl implements BookingService {
 
             case "REJECTED" -> bookingRepository.findByBooker_Id(
                             userId,
-                            sort)
-                    .stream()
+                            sort
+                    ).stream()
                     .filter(booking ->
                             booking.getStatus()
                                     == BookingStatus.REJECTED)
                     .toList();
 
             default -> throw new ValidationException(
-                    "Unknown state: " + state);
-        };
-    }
-
-    private List<Booking> filterByState(
-            List<Booking> bookings,
-            String state,
-            LocalDateTime now) {
-
-        return switch (state.toUpperCase()) {
-            case "ALL" -> bookings;
-
-            case "CURRENT" -> bookings.stream()
-                    .filter(booking ->
-                            booking.getStart().isBefore(now)
-                                    && booking.getEnd().isAfter(now))
-                    .toList();
-
-            case "PAST" -> bookings.stream()
-                    .filter(booking ->
-                            booking.getEnd().isBefore(now))
-                    .toList();
-
-            case "FUTURE" -> bookings.stream()
-                    .filter(booking ->
-                            booking.getStart().isAfter(now))
-                    .toList();
-
-            case "WAITING" -> bookings.stream()
-                    .filter(booking ->
-                            booking.getStatus()
-                                    == BookingStatus.WAITING)
-                    .toList();
-
-            case "REJECTED" -> bookings.stream()
-                    .filter(booking ->
-                            booking.getStatus()
-                                    == BookingStatus.REJECTED)
-                    .toList();
-
-            default -> throw new ValidationException(
-                    "Unknown state: " + state);
+                    "Unknown state: " + state
+            );
         };
     }
 
@@ -332,16 +323,5 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundException(
                     "User with id " + userId + " not found");
         }
-    }
-
-    private BookingDto toDto(Booking booking) {
-        return new BookingDto(
-                booking.getId(),
-                booking.getStart(),
-                booking.getEnd(),
-                ItemMapper.toItemDto(booking.getItem()),
-                UserMapper.toUserDto(booking.getBooker()),
-                booking.getStatus()
-        );
     }
 }
