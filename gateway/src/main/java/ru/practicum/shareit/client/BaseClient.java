@@ -73,8 +73,18 @@ public class BaseClient {
             }
             return rest.exchange(path, method, requestEntity, Object.class);
         } catch (HttpStatusCodeException e) {
+            HttpHeaders headers = new HttpHeaders();
+
+            MediaType contentType = e.getResponseHeaders() == null
+                    ? null
+                    : e.getResponseHeaders().getContentType();
+
+            if (contentType != null) {
+                headers.setContentType(contentType);
+            }
+
             return ResponseEntity.status(e.getStatusCode())
-                    .headers(e.getResponseHeaders() == null ? new HttpHeaders() : e.getResponseHeaders())
+                    .headers(headers)
                     .body(e.getResponseBodyAsByteArray());
         }
     }
