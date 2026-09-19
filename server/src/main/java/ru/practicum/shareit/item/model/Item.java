@@ -41,8 +41,8 @@ public class Item {
         this.id = id;
         this.name = name;
         this.description = description;
-        this.available = available;
         this.owner = owner;
+        this.available = available;
     }
 
     public Long getId() {
