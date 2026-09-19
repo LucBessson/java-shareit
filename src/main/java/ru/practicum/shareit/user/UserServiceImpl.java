@@ -18,19 +18,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
-        if (userDto.getName() == null || userDto.getName().isBlank()) {
-            throw new ValidationException("Name cannot be empty");
-        }
+        validateName(userDto.getName());
+        validateEmail(userDto.getEmail());
 
-        if (userDto.getEmail() == null || userDto.getEmail().isBlank()) {
-            throw new ValidationException("Email cannot be empty");
-        }
-
-        if (!userDto.getEmail().contains("@")) {
-            throw new ValidationException("Invalid email");
-        }
-
-        if (userRepository.existsByEmail(userDto.getEmail())) {
+        if (userRepository.existsByEmailIgnoreCase(userDto.getEmail())) {
             throw new ConflictException("Email already exists");
         }
 
@@ -48,16 +39,9 @@ public class UserServiceImpl implements UserService {
                                 "User with id " + userId + " not found"));
 
         if (userDto.getEmail() != null) {
-            if (userDto.getEmail().isBlank()) {
-                throw new ValidationException("Email cannot be empty");
-            }
+            validateEmail(userDto.getEmail());
 
-            if (!userDto.getEmail().matches(
-                    "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
-                throw new ValidationException("Invalid email");
-            }
-
-            if (userRepository.existsByEmailAndNotId(
+            if (userRepository.existsByEmailIgnoreCaseAndIdNot(
                     userDto.getEmail(), userId)) {
                 throw new ConflictException("Email already exists");
             }
@@ -66,14 +50,11 @@ public class UserServiceImpl implements UserService {
         }
 
         if (userDto.getName() != null) {
-            if (userDto.getName().isBlank()) {
-                throw new ValidationException("Name cannot be empty");
-            }
-
+            validateName(userDto.getName());
             user.setName(userDto.getName());
         }
 
-        return UserMapper.toUserDto(userRepository.update(user));
+        return UserMapper.toUserDto(userRepository.save(user));
     }
 
     @Override
@@ -87,6 +68,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDto> getAll() {
+        return userRepository.findAll()
+                .stream()
+                .map(UserMapper::toUserDto)
+                .toList();
+    }
+
+    @Override
     public void delete(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException(
@@ -96,11 +85,19 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(userId);
     }
 
-    @Override
-    public List<UserDto> getAll() {
-        return userRepository.findAll()
-                .stream()
-                .map(UserMapper::toUserDto)
-                .toList();
+    private void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new ValidationException("Name cannot be empty");
+        }
+    }
+
+    private void validateEmail(String email) {
+        if (email == null || email.isBlank()) {
+            throw new ValidationException("Email cannot be empty");
+        }
+
+        if (!email.matches("^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$")) {
+            throw new ValidationException("Invalid email");
+        }
     }
 }
