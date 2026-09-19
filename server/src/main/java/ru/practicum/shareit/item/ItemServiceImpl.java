@@ -13,6 +13,8 @@ import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemWithBookingsDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 
@@ -28,38 +30,40 @@ public class ItemServiceImpl implements ItemService {
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
+
 
     public ItemServiceImpl(
             ItemRepository itemRepository,
             UserRepository userRepository,
             BookingRepository bookingRepository,
-            CommentRepository commentRepository) {
+            CommentRepository commentRepository,
+            ItemRequestRepository itemRequestRepository) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
         this.commentRepository = commentRepository;
+        this.itemRequestRepository = itemRequestRepository;
     }
 
     @Override
-    public ItemDto create(
-            Long userId,
-            ItemDto itemDto) {
-
+    public ItemDto create(Long userId, ItemDto itemDto) {
         User owner = userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new NotFoundException(
-                                "User with id "
-                                        + userId
-                                        + " not found"));
+                .orElseThrow(() -> new NotFoundException("User with id " + userId + " not found"));
 
         validateItem(itemDto);
 
         Item item = ItemMapper.toItem(itemDto);
         item.setOwner(owner);
 
-        return ItemMapper.toItemDto(
-                itemRepository.save(item)
-        );
+        if (itemDto.getRequestId() != null) {
+            ItemRequest request = itemRequestRepository.findById(itemDto.getRequestId())
+                    .orElseThrow(() -> new NotFoundException(
+                            "Request with id " + itemDto.getRequestId() + " not found"));
+            item.setRequest(request);
+        }
+
+        return ItemMapper.toItemDto(itemRepository.save(item));
     }
 
     @Override
